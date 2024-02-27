@@ -1,0 +1,76 @@
+import sqlite3
+
+
+# Function to create the database table
+def create_table():
+    connection = sqlite3.connect("contact_book.db")
+    cursor = connection.cursor()
+    
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS contacts (
+            ID INTEGER PRIMARY KEY AUTOINCREMENT,
+            Name TEXT NOT NULL,
+            CellNumber TEXT NOT NULL,
+            Email TEXT
+        )
+    """)
+    
+    connection.commit()
+    connection.close()
+
+# Function to insert data into the database
+def insert_data(name, cell_number, email):
+    connection = sqlite3.connect("contact_book.db")
+    cursor = connection.cursor()
+    
+    cursor.execute("""
+        INSERT INTO contacts (Name, CellNumber, Email) VALUES (?, ?, ?)
+    """, (name, cell_number, email))
+    
+    connection.commit()
+    connection.close()
+
+# Function to fetch and display all data
+def fetch_and_display_data():
+    connection = sqlite3.connect("contact_book.db")
+    cursor = connection.cursor()
+    
+    cursor.execute("SELECT * FROM contacts")
+    data = cursor.fetchall()
+    
+    if not data:
+        print("No contacts found.")
+    else:
+        for row in data:
+            print(f"ID:{row[0]} \nName: {row[1]} \nCell#: {row[2]} \nEmail: {row[3]}")
+    
+    connection.close()
+    
+# Function to clear the database (drop table)
+def clear_database():
+    connection = sqlite3.connect("contact_book.db")
+    cursor = connection.cursor()
+    
+    cursor.execute("DROP TABLE IF EXISTS contacts")
+    
+    connection.commit()
+    connection.close()    
+
+# Creating the table
+create_table()
+
+# Clearing the database before inserting new data
+clear_database()
+
+# Creating the table again after clearing
+create_table()
+
+# Inserting 5 rows of data
+insert_data("Jay", "9654387654", "jay@email.com")
+insert_data("Jane", "9876543210", "jane@email.com")
+insert_data("Harry", "9876705555", "harry@email.com")
+insert_data("Bob", "9998887777", "bob@email.com")
+insert_data("Charlie", "8073222283", "charlie@email.com")
+
+# Fetching and displaying all data
+fetch_and_display_data()
